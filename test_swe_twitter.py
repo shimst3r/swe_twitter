@@ -15,6 +15,7 @@ class TestBot(unittest.TestCase):
         """Setup everything (unittest method)."""
         self.bot = swe_twitter.bot.Bot()
         self.connection = self.bot.twitter_connection()
+        self.data = self.bot.swe_request()
 
     def tearDown(self):
         """Destroy everything (unittest method)."""
@@ -24,24 +25,23 @@ class TestBot(unittest.TestCase):
 class TestConnectionMethods(TestBot):
     """This class is responsible for testing database and Twitter connections.
     """
-    def test_swe_request(self):
-        """Test if SWE request returns any data."""
-        data = self.bot.swe_request()
-        self.assertIsNotNone(data)
+    def test_swe_request_returns_data(self):
+        self.assertIsNotNone(self.data)
 
-    def test_twitter_connection(self):
-        """Test if bot is able to connect to Twitter API."""
+    def test_twitter_connection_positive(self):
         self.assertIsNotNone(self.connection)
 
-    def test_twitter_screen_name(self):
-        """Test if bot is connected with correct credentials."""
-        self.assertEquals("SWE_3PO",
-                          self.connection.VerifyCredentials().screen_name)
+    def test_twitter_screen_name_correct(self):
+        self.assertEqual("SWE_3PO",
+                         self.connection.VerifyCredentials().screen_name)
 
-    def test_mission_object_has_correct_structure(self):
-        """Test if mission is of the correct type."""
-        mission = None
-        self.assertIsInstance(mission, swe_twitter.mission.Mission)
+    def test_swe_data_contains_relevant_data(self):
+        fields = {"CoName", "CoRankShort", "Gametime","SquadName", "SquadType"}
+        for entry in self.data:
+            for field in fields:
+                self.assertIn(field, entry.keys())
+
+    # TODO: Test cases for mission class
 
 if __name__ == "__main__":
     unittest.main()
