@@ -1,7 +1,7 @@
 swe_twitter
 ====================================================
 
-.. image::https://sw-empire.de/design/header_left.jpg
+.. image::header.jpg
 
 Aktuelle Missionserinnerungen mit Twitter
 -----------------------------------------
