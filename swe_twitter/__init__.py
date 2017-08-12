@@ -1,1 +1,1 @@
-__all__ = ["mission", "run_bot"]
+__all__ = ["bot", "mission"]
