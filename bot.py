@@ -16,10 +16,10 @@ from . import settings
 class Bot(object):
     def __init__(self):
         self.access_token = settings.ACCESS_TOKEN
-        self.access_token_secret = settings.ACCESS_SECRET_TOKEN
+        self.access_token_secret = settings.ACCESS_TOKEN_SECRET
         self.consumer_key = settings.CONSUMER_KEY
         self.consumer_key_secret = settings.CONSUMER_SECRET
-        # self.log_file = settings.LOG_FILE
+        self.log_file = settings.LOG_FILE
         self.url = settings.URL
 
     def swe_request(self):

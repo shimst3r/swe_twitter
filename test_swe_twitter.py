@@ -1,4 +1,5 @@
 # imports from standard libraries
+import collections
 import unittest
 
 # imports from global libraries
@@ -36,12 +37,20 @@ class TestConnectionMethods(TestBot):
                          self.connection.VerifyCredentials().screen_name)
 
     def test_swe_data_contains_relevant_data(self):
-        fields = {"CoName", "CoRankShort", "Gametime","SquadName", "SquadType"}
+        fields = {"CoName", "CoRankShort", "Gametime",
+                  "SquadName", "SquadType"}
         for entry in self.data:
             for field in fields:
                 self.assertIn(field, entry.keys())
 
-    # TODO: Test cases for mission class
+    def test_mission_has_all_attributes(self):
+        test_mission = swe_twitter.mission.Mission(self.data[0])
+        KO = test_mission.KO
+        KO_Rang = test_mission.KO_Rang
+        Einheit = test_mission.Einheit
+        TSK = test_mission.TSK
+        Spielzeit = test_mission.Spielzeit
+        pass
 
 if __name__ == "__main__":
     unittest.main()
