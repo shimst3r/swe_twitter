@@ -22,6 +22,10 @@ class Bot(object):
         # self.log_file = settings.LOG_FILE
         self.url = settings.URL
 
+    def post_update(self, text):
+        connection = self.twitter_connection()
+        connection.PostUpdate(text)
+
     def swe_request(self):
         """Collect JSON data available at url."""
         data = requests.get(self.url).json()

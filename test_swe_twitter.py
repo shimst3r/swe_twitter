@@ -16,7 +16,7 @@ class TestBot(unittest.TestCase):
         """Setup everything (unittest method)."""
         self.bot = swe_twitter.bot.Bot()
         self.connection = self.bot.twitter_connection()
-        self.data = self.bot.swe_request()
+        # self.data = self.bot.swe_request()
 
     def tearDown(self):
         """Destroy everything (unittest method)."""
@@ -51,6 +51,15 @@ class TestConnectionMethods(TestBot):
         TSK = test_mission.TSK
         Spielzeit = test_mission.Spielzeit
         pass
+
+    def test_bot_can_post_to_twitter_wall(self):
+        test_status = "Test"
+        self.bot.post_update(test_status)
+        latest_tweet = next(tweet
+                            for tweet in self.connection.GetHomeTimeline()
+                            if tweet.user.screen_name == "SWE_3PO")
+        self.assertEqual(test_status, latest_tweet.text)
+        self.connection.DestroyStatus(latest_tweet.id)
 
 if __name__ == "__main__":
     unittest.main()
