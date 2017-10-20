@@ -10,3 +10,10 @@ class Mission(object):
         time = re.split(r'[-|T|:]', data["Gametime"])
         y, m, d, h, mn, s = [int(_) for _ in time]
         self.Spielzeit = datetime.datetime(y, m, d, h, mn, s)
+
+    def __str__(self):
+        return {
+            "Army": ArmyText(self),
+            "Navy": NavyText(self),
+            "Starfighter Corps": SFCText(self)
+        }.get(self.TSK, ValueError)

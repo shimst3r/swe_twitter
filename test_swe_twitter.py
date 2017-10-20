@@ -16,7 +16,7 @@ class TestBot(unittest.TestCase):
         """Setup everything (unittest method)."""
         self.bot = swe_twitter.bot.Bot()
         self.connection = self.bot.twitter_connection()
-        # self.data = self.bot.swe_request()
+        self.data = self.bot.swe_request()
 
     def tearDown(self):
         """Destroy everything (unittest method)."""
@@ -51,6 +51,35 @@ class TestConnectionMethods(TestBot):
         TSK = test_mission.TSK
         Spielzeit = test_mission.Spielzeit
         pass
+
+    def test_army_mission_displayed_correctly(self):
+        mission_data = {"Gametime":"2017-10-22T20:00:00","Story":"...",
+                        "Title":"","SquadName":"Stormangels","SquadType":"Army",
+                        "CoName":"Valera-Kelley","CoFirstName":"Nyah",
+                        "CoRank":"Major General","CoRankShort":"MajGen"}
+        mission_instance = swe_twitter.mission.Mission(mission_data)
+        mission_str = ""
+        self.assertEquals(str(mission_instance), mission_str)
+
+    def test_navy_mission_displayed_correctly(self):
+        mission_data = {"Gametime":"2017-10-20T21:00:00",
+                        "Story":"Regulärer Spieltermin","Title":"",
+                        "SquadName":"TSD Darkness","SquadType":"Navy",
+                        "CoName":"Marae","CoFirstName":"Darth",
+                        "CoRank":"Sith Lord","CoRankShort":"SL"}
+        mission_instance = swe_twitter.mission.Mission(mission_data)
+        mission_str = ""
+        self.assertEquals(str(mission_instance), mission_str)
+
+    def test_sfc_mission_displayed_correctly(self):
+        mission_data = {"Gametime":"2017-11-07T20:00:00","Story":"-","Title":"",
+                        "SquadName":"Jackhammer II",
+                        "SquadType":"Starfighter Corps","CoName":"Dalyas",
+                        "CoFirstName":"Kren","CoRank":"Sentinel",
+                        "CoRankShort":"Se"}
+        mission_instance = swe_twitter.mission.Mission(mission_data)
+        mission_str = ""
+        self.assertEquals(str(mission_instance), mission_str)
 
     def test_bot_can_post_to_twitter_wall(self):
         test_status = "Test"
