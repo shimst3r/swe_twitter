@@ -1,5 +1,4 @@
 # imports from standard libraries
-import collections
 import datetime
 import re
 import unittest
@@ -15,28 +14,19 @@ import swe_twitter.mission
 class TestBot(unittest.TestCase):
     """Basic test bot template."""
     def setUp(self):
-        """Setup everything (unittest method)."""
         self.bot = swe_twitter.bot.Bot()
         self.connection = self.bot.twitter_connection()
         self.data = self.bot.swe_request()
 
     def tearDown(self):
-        """Destroy everything (unittest method)."""
         pass
 
 
-class TestConnectionMethods(TestBot):
+class TestConnection(TestBot):
     """This class is responsible for testing database and Twitter connections.
     """
     def test_swe_request_returns_data(self):
         self.assertIsNotNone(self.data)
-
-    def test_twitter_connection_positive(self):
-        self.assertIsNotNone(self.connection)
-
-    def test_twitter_screen_name_correct(self):
-        self.assertEqual("SWE_3PO",
-                         self.connection.VerifyCredentials().screen_name)
 
     def test_swe_data_contains_relevant_data(self):
         fields = {"CoName", "CoRankShort", "Gametime",
@@ -45,6 +35,16 @@ class TestConnectionMethods(TestBot):
             for field in fields:
                 self.assertIn(field, entry.keys())
 
+    def test_twitter_connection_positive(self):
+        self.assertIsNotNone(self.connection)
+
+    def test_twitter_screen_name_correct(self):
+        self.assertEqual("SWE_3PO",
+                         self.connection.VerifyCredentials().screen_name)
+
+
+class TestMissionClass(TestBot):
+    """This class is responsible for testing all methods of Mission."""
     def test_mission_has_all_attributes(self):
         mission_data = {"Gametime":"2017-01-01T20:00:00","Story":"...",
                         "Title":"","SquadName":"ArmySquad","SquadType":"Army",
@@ -94,6 +94,13 @@ class TestConnectionMethods(TestBot):
                        "nE um 2000 SZ ins Gefecht.")
         self.assertEqual(str(mission_instance), mission_str)
 
+    def test_mission_text_shorter_than_140_characters(self):
+        for entry in self.data:
+            test_mission = swe_twitter.mission.Mission(entry)
+            self.assertLessEqual(len(str(test_mission)), 140)
+
+class TestBotClass(TestBot):
+    """This class is responsible for testing all methods of class Bot."""
     def test_bot_can_post_to_twitter_wall(self):
         test_status = "Test"
         self.bot.post_update(test_status)
@@ -102,11 +109,6 @@ class TestConnectionMethods(TestBot):
                             if tweet.user.screen_name == "SWE_3PO")
         self.assertEqual(test_status, latest_tweet.text)
         self.connection.DestroyStatus(latest_tweet.id)
-
-    def test_mission_text_shorter_than_140_characters(self):
-        for entry in self.data:
-            test_mission = swe_twitter.mission.Mission(entry)
-            self.assertLessEqual(len(str(test_mission)), 140)
 
 if __name__ == "__main__":
     unittest.main()
