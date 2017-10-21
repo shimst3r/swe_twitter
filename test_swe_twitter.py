@@ -110,6 +110,10 @@ class TestMissionClass(TestBot):
 
 class TestBotClass(TestBot):
     """This class is responsible for testing all methods of class Bot."""
+    def test_bot_internal_representation(self):
+        bot_repr = "Bot(SWE_3PO)"
+        self.assertEqual(bot_repr, repr(self.bot))
+
     def test_bot_can_post_to_twitter_wall(self):
         test_status = "Test"
         self.bot.post_update(test_status)
@@ -118,6 +122,11 @@ class TestBotClass(TestBot):
                             if tweet.user.screen_name == "SWE_3PO")
         self.assertEqual(test_status, latest_tweet.text)
         self.connection.DestroyStatus(latest_tweet.id)
+
+class TestRunBot(TestBot):
+    """This class is responsible for testing the run_bot script."""
+    def test_filter_data_filters_correctly(self):
+        self.assertTrue(False)
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 """
-swe_twitter.run_bot
-This module handles the business logic of SWE's twitter bot.
+swe_twitter.bot
+This module handles the business logic of SWE's Twitter bot.
 """
 
 # global imports
@@ -22,7 +22,15 @@ class Bot(object):
         # self.log_file = settings.LOG_FILE
         self.url = settings.URL
 
+    def __repr__(self):
+        connection = self.twitter_connection()
+        screen_name = connection.VerifyCredentials().screen_name
+        text = "{class_name}({screen_name})".format(
+            class_name=self.__class__.__name__, screen_name=screen_name)
+        return text
+
     def post_update(self, text):
+        """Connect to Twitter and post text."""
         connection = self.twitter_connection()
         connection.PostUpdate(text)
 

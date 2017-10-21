@@ -2,6 +2,8 @@
 # settings don't have to end up on Github, right? ;)
 settings.py
 
+# Log files don't have to clutter Github either
+bot.log
 
 ### Sample .gitignore file as proposed by github
 
