@@ -60,6 +60,15 @@ class TestMissionClass(TestBot):
         self.assertEqual(mission_data["SquadType"], test_mission.TSK)
         self.assertEqual(date, test_mission.Spielzeit)
 
+    def test_mission_internal_representation(self):
+        mission_data = {"Gametime":"2017-01-01T20:00:00","Story":"...",
+                        "Title":"","SquadName":"ArmySquad","SquadType":"Army",
+                        "CoName":"Test", "CoFirstName":"Test",
+                        "CoRank":"General","CoRankShort":"Gen"}
+        mission_instance = swe_twitter.mission.Mission(mission_data)
+        mission_repr = "Mission(ArmySquad, 010122)"
+        self.assertEqual(repr(mission_instance), mission_repr)
+
     def test_army_mission_displayed_correctly(self):
         mission_data = {"Gametime":"2017-01-01T20:00:00","Story":"...",
                         "Title":"","SquadName":"ArmySquad","SquadType":"Army",

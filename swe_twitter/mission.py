@@ -11,6 +11,14 @@ class Mission(object):
         y, m, d, h, mn, s = [int(_) for _ in time]
         self.Spielzeit = datetime.datetime(y + 5, m, d, h, mn, s)
 
+    def __repr__(self):
+        datum = self.Spielzeit.strftime("%d%m%y")
+        einheit = self.Einheit
+        text = "{class_name}({einheit}, {datum})".format(
+            class_name=self.__class__.__name__, einheit=einheit, datum=datum)
+
+        return text
+
     def __str__(self):
         return {
             "Army": self.ArmyText(),
