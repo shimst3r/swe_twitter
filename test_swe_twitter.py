@@ -1,5 +1,7 @@
 # imports from standard libraries
 import collections
+import datetime
+import re
 import unittest
 
 # imports from global libraries
@@ -44,42 +46,53 @@ class TestConnectionMethods(TestBot):
                 self.assertIn(field, entry.keys())
 
     def test_mission_has_all_attributes(self):
-        test_mission = swe_twitter.mission.Mission(self.data[0])
-        KO = test_mission.KO
-        KO_Rang = test_mission.KO_Rang
-        Einheit = test_mission.Einheit
-        TSK = test_mission.TSK
-        Spielzeit = test_mission.Spielzeit
-        pass
+        mission_data = {"Gametime":"2017-01-01T20:00:00","Story":"...",
+                        "Title":"","SquadName":"ArmySquad","SquadType":"Army",
+                        "CoName":"Test", "CoFirstName":"Test",
+                        "CoRank":"General","CoRankShort":"Gen"}
+        test_mission = swe_twitter.mission.Mission(mission_data)
+        time = re.split(r'[-|T|:]', mission_data["Gametime"])
+        y, m, d, h, mn, s = [int(_) for _ in time]
+        date = datetime.datetime(y + 5, m, d, h, mn, s)
+        self.assertEqual(mission_data["CoName"], test_mission.KO)
+        self.assertEqual(mission_data["CoRankShort"], test_mission.KO_Rang)
+        self.assertEqual(mission_data["SquadName"], test_mission.Einheit)
+        self.assertEqual(mission_data["SquadType"], test_mission.TSK)
+        self.assertEqual(date, test_mission.Spielzeit)
 
     def test_army_mission_displayed_correctly(self):
-        mission_data = {"Gametime":"2017-10-22T20:00:00","Story":"...",
-                        "Title":"","SquadName":"Stormangels","SquadType":"Army",
-                        "CoName":"Valera-Kelley","CoFirstName":"Nyah",
-                        "CoRank":"Major General","CoRankShort":"MajGen"}
+        mission_data = {"Gametime":"2017-01-01T20:00:00","Story":"...",
+                        "Title":"","SquadName":"ArmySquad","SquadType":"Army",
+                        "CoName":"Test", "CoFirstName":"Test",
+                        "CoRank":"General","CoRankShort":"Gen"}
         mission_instance = swe_twitter.mission.Mission(mission_data)
-        mission_str = ""
-        self.assertEquals(str(mission_instance), mission_str)
+        mission_str = ("Kämpft als Soldaten des Regiments ArmySquad "
+                       "unter Kommando von Gen Test zu ZI 010122 nE um "
+                       "2000 SZ für das Imperium!")
+        self.assertEqual(str(mission_instance), mission_str)
 
     def test_navy_mission_displayed_correctly(self):
-        mission_data = {"Gametime":"2017-10-20T21:00:00",
-                        "Story":"Regulärer Spieltermin","Title":"",
-                        "SquadName":"TSD Darkness","SquadType":"Navy",
-                        "CoName":"Marae","CoFirstName":"Darth",
-                        "CoRank":"Sith Lord","CoRankShort":"SL"}
+        mission_data = {"Gametime":"2017-01-01T20:00:00","Story":"...",
+                        "Title":"","SquadName":"NavySquad","SquadType":"Navy",
+                        "CoName":"Test", "CoFirstName":"Test",
+                        "CoRank":"Admiral","CoRankShort":"Adm"}
         mission_instance = swe_twitter.mission.Mission(mission_data)
-        mission_str = ""
-        self.assertEquals(str(mission_instance), mission_str)
+        mission_str = ("Schließt euch dem Kriegsschiff NavySquad unter "
+                       "Kommando von Adm Test zu ZI 010122 nE um "
+                       "2000 SZ im Kampf für das Imperium an!")
+        self.assertEqual(str(mission_instance), mission_str)
 
     def test_sfc_mission_displayed_correctly(self):
-        mission_data = {"Gametime":"2017-11-07T20:00:00","Story":"-","Title":"",
-                        "SquadName":"Jackhammer II",
-                        "SquadType":"Starfighter Corps","CoName":"Dalyas",
-                        "CoFirstName":"Kren","CoRank":"Sentinel",
-                        "CoRankShort":"Se"}
+        mission_data = {"Gametime":"2017-01-01T20:00:00","Story":"...",
+                        "Title":"","SquadName":"SFCSquad",
+                        "SquadType":"Starfighter Corps",
+                        "CoName":"Test", "CoFirstName":"Test",
+                        "CoRank":"Marshal","CoRankShort":"Ma"}
         mission_instance = swe_twitter.mission.Mission(mission_data)
-        mission_str = ""
-        self.assertEquals(str(mission_instance), mission_str)
+        mission_str = ("Begleitet die Piloten des Trägers SFCSquad "
+                       "unter Kommando von Ma Test zu ZI 010122 "
+                       "nE um 2000 SZ ins Gefecht.")
+        self.assertEqual(str(mission_instance), mission_str)
 
     def test_bot_can_post_to_twitter_wall(self):
         test_status = "Test"
@@ -89,6 +102,11 @@ class TestConnectionMethods(TestBot):
                             if tweet.user.screen_name == "SWE_3PO")
         self.assertEqual(test_status, latest_tweet.text)
         self.connection.DestroyStatus(latest_tweet.id)
+
+    def test_mission_text_shorter_than_140_characters(self):
+        for entry in self.data:
+            test_mission = swe_twitter.mission.Mission(entry)
+            self.assertLessEqual(len(str(test_mission)), 140)
 
 if __name__ == "__main__":
     unittest.main()
