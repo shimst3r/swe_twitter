@@ -44,6 +44,8 @@ def run_bot():
                     format="%(asctime)s :: %(levelname)s -> %(message)s",
                     level=logging.INFO)
 
+    bot_job()
+
     while 1:
         schedule.every().day.at("23:59").do(bot_job)
 
