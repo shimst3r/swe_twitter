@@ -27,8 +27,7 @@ class Bot(object):
         self.connection = self.twitter_connection()
 
     def __repr__(self):
-        connection = self.twitter_connection()
-        screen_name = connection.VerifyCredentials().screen_name
+        screen_name = self.connection.VerifyCredentials().screen_name
         text = "{class_name}({screen_name})".format(
             class_name=self.__class__.__name__, screen_name=screen_name)
         return text
