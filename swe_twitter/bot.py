@@ -5,6 +5,9 @@ swe_twitter.bot
 This module handles the business logic of SWE's Twitter bot.
 """
 
+# standard imports
+import logging
+
 # global imports
 import requests
 import twitter
@@ -21,6 +24,7 @@ class Bot(object):
         self.consumer_key_secret = settings.CONSUMER_SECRET
         # self.log_file = settings.LOG_FILE
         self.url = settings.URL
+        self.connection = self.twitter_connection()
 
     def __repr__(self):
         connection = self.twitter_connection()
@@ -31,19 +35,26 @@ class Bot(object):
 
     def post_update(self, text):
         """Connect to Twitter and post text."""
-        connection = self.twitter_connection()
-        connection.PostUpdate(text)
+        self.connection.PostUpdate(text)
 
     def swe_request(self):
         """Collect JSON data available at url."""
-        data = requests.get(self.url).json()
-        return data
+        logging.info("Connect to SWE API.")
+        try:
+            data = requests.get(self.url).json()
+            return data
+        except requests.ConnectionError:
+            logging.error("No connection to SWE API possible.")
 
     def twitter_connection(self):
         """Connect to Twitter API using local settings."""
-        connection = twitter.Api(
-            consumer_key=self.consumer_key,
-            consumer_secret=self.consumer_key_secret,
-            access_token_key=self.access_token,
-            access_token_secret=self.access_token_secret)
-        return connection
+        logging.info("Connect to Twitter.")
+        try:
+            connection = twitter.Api(
+                consumer_key=self.consumer_key,
+                consumer_secret=self.consumer_key_secret,
+                access_token_key=self.access_token,
+                access_token_secret=self.access_token_secret)
+            return connection
+        except twitter.TwitterError:
+            logging.error("No connection to Twitter profile possible.")

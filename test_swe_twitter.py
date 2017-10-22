@@ -123,10 +123,5 @@ class TestBotClass(TestBot):
         self.assertEqual(test_status, latest_tweet.text)
         self.connection.DestroyStatus(latest_tweet.id)
 
-class TestRunBot(TestBot):
-    """This class is responsible for testing the run_bot script."""
-    def test_filter_data_filters_correctly(self):
-        self.assertTrue(False)
-
 if __name__ == "__main__":
     unittest.main()

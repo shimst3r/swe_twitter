@@ -13,7 +13,7 @@ import logging
 import schedule
 
 # local imports
-from . import bot, mission, settings
+from swe_twitter import bot, mission, settings
 
 # Format string for datetime.datetime.strptime
 strptime_fmt = "%Y-%m-%dT%H:%M:%S"
@@ -21,15 +21,14 @@ strptime_fmt = "%Y-%m-%dT%H:%M:%S"
 def bot_job(my_bot):
     """Job executed by scheduler."""
     data = my_bot.swe_request()
-    logging.info("Connect to SWE API.")
-    todays_missions = [entry for entry in filter_data(data,datetime.datetime.now().date())]
+    todays_missions = {mission.Mission(entry) for entry
+                       in bot.filter_data(data,datetime.datetime.now().date())}
+    logging.info("Found {amount} entries.".format(amout=len(todays_missions)))
 
-def filter_data(data, date):
-    """Go through data and yield entries corresponding to date."""
-    for entry in data:
-        entry_date = datetime.datetime.strptime(entry["Gametime"], strptime_fmt).date()
-        if entry_date + datetime.timedelta(days=1) == date:
-            yield entry
+    for mission in todays_missions:
+        my_bot.post_update(str(mission))
+        logging.info("Sent tweet {mission}".format(mission=repr(mission)))
+
 
 def run_bot():
     """Initialize bot and start loop."""
