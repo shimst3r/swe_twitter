@@ -46,8 +46,8 @@ def run_bot():
 
     bot_job()
 
-    while 1:
-        schedule.every().day.at("23:59").do(bot_job)
+    # while 1:
+    #     schedule.every().day.at("23:59").do(bot_job)
 
 if __name__ == "__main__":
     run_bot()
