@@ -12,7 +12,7 @@ import re
 class Mission(object):
     def __init__(self, data):
         self.KO = data["CoName"]
-        self.KO_Rang = data["CoRankShort"]
+        self.KO_Rang = data["CoRank"]
         self.Einheit = data["SquadName"]
         self.TSK = data["SquadType"]
         self.Spielzeit = self.timeTransformer(data["Gametime"])
@@ -30,10 +30,10 @@ class Mission(object):
             "Army": self.armyText(),
             "Navy": self.navyText(),
             "Starfighter Corps": self.sfcText()
-        }.get(self.TSK, ValueError)
+        }.get(self.TSK, "Hier ist etwas schief gelaufen.")
 
     def armyText(self):
-        text = ("Kämpft als Soldaten des Regiments",
+        text = ("Kämpft als Soldat_innen des Regiments",
                 "{einheit} unter Kommando von".format(einheit=self.Einheit),
                 "{rang} {name} zu ZI".format(rang=self.KO_Rang, name=self.KO),
                 "{zi} nE um".format(zi=self.Spielzeit.strftime("%d%m%y")),
@@ -50,7 +50,7 @@ class Mission(object):
         return " ".join(text)
 
     def sfcText(self):
-        text = ("Begleitet die Piloten des Trägers {einheit}".format(einheit=self.Einheit),
+        text = ("Begleitet die Pilot_innen des Trägers {einheit}".format(einheit=self.Einheit),
                 "unter Kommando von {rang}".format(rang=self.KO_Rang),
                 "{name} zu ZI {zi} nE um".format(name=self.KO, zi=self.Spielzeit.strftime("%d%m%y")),
                 "{uhr} SZ ins Gefecht.".format(uhr=self.Spielzeit.strftime("%H%M")))

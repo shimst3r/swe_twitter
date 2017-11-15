@@ -29,7 +29,7 @@ class TestConnection(TestBot):
         self.assertIsNotNone(self.data)
 
     def test_swe_data_contains_relevant_data(self):
-        fields = {"CoName", "CoRankShort", "Gametime",
+        fields = {"CoName", "CoRank", "Gametime",
                   "SquadName", "SquadType"}
         for entry in self.data:
             for field in fields:
@@ -46,67 +46,72 @@ class TestConnection(TestBot):
 class TestMissionClass(TestBot):
     """This class is responsible for testing all methods of Mission."""
     def test_mission_has_all_attributes(self):
-        mission_data = {"Gametime":"2017-01-01T20:00:00","Story":"...",
-                        "Title":"","SquadName":"ArmySquad","SquadType":"Army",
-                        "CoName":"Test", "CoFirstName":"Test",
-                        "CoRank":"General","CoRankShort":"Gen"}
+        mission_data = {"Gametime": "2017-01-01T20:00:00", "Story": "...",
+                        "Title": "", "SquadName": "ArmySquad",
+                        "SquadType": "Army", "CoName": "Test",
+                        "CoFirstName": "Test", "CoRank": "General",
+                        "CoRankShort": "Gen"}
         test_mission = swe_twitter.mission.Mission(mission_data)
         time = re.split(r'[-|T|:]', mission_data["Gametime"])
         y, m, d, h, mn, s = [int(_) for _ in time]
         date = datetime.datetime(y + 5, m, d, h, mn, s)
         self.assertEqual(mission_data["CoName"], test_mission.KO)
-        self.assertEqual(mission_data["CoRankShort"], test_mission.KO_Rang)
+        self.assertEqual(mission_data["CoRank"], test_mission.KO_Rang)
         self.assertEqual(mission_data["SquadName"], test_mission.Einheit)
         self.assertEqual(mission_data["SquadType"], test_mission.TSK)
         self.assertEqual(date, test_mission.Spielzeit)
 
     def test_mission_internal_representation(self):
-        mission_data = {"Gametime":"2017-01-01T20:00:00","Story":"...",
-                        "Title":"","SquadName":"ArmySquad","SquadType":"Army",
-                        "CoName":"Test", "CoFirstName":"Test",
-                        "CoRank":"General","CoRankShort":"Gen"}
+        mission_data = {"Gametime": "2017-01-01T20:00:00", "Story": "...",
+                        "Title": "", "SquadName": "ArmySquad",
+                        "SquadType": "Army", "CoName": "Test",
+                        "CoFirstName": "Test", "CoRank": "General",
+                        "CoRankShort": "Gen"}
         mission_instance = swe_twitter.mission.Mission(mission_data)
         mission_repr = "Mission(ArmySquad, 010122)"
         self.assertEqual(repr(mission_instance), mission_repr)
 
     def test_army_mission_displayed_correctly(self):
-        mission_data = {"Gametime":"2017-01-01T20:00:00","Story":"...",
-                        "Title":"","SquadName":"ArmySquad","SquadType":"Army",
-                        "CoName":"Test", "CoFirstName":"Test",
-                        "CoRank":"General","CoRankShort":"Gen"}
+        mission_data = {"Gametime": "2017-01-01T20:00:00", "Story": "...",
+                        "Title": "", "SquadName": "ArmySquad",
+                        "SquadType": "Army",
+                        "CoName": "Test", "CoFirstName": "Test",
+                        "CoRank": "General", "CoRankShort": "Gen"}
         mission_instance = swe_twitter.mission.Mission(mission_data)
         mission_str = ("Kämpft als Soldaten des Regiments ArmySquad "
-                       "unter Kommando von Gen Test zu ZI 010122 nE um "
+                       "unter Kommando von General Test zu ZI 010122 nE um "
                        "2000 SZ für das Imperium!")
         self.assertEqual(str(mission_instance), mission_str)
 
     def test_navy_mission_displayed_correctly(self):
-        mission_data = {"Gametime":"2017-01-01T20:00:00","Story":"...",
-                        "Title":"","SquadName":"NavySquad","SquadType":"Navy",
-                        "CoName":"Test", "CoFirstName":"Test",
-                        "CoRank":"Admiral","CoRankShort":"Adm"}
+        mission_data = {"Gametime": "2017-01-01T20:00:00", "Story": "...",
+                        "Title": "", "SquadName": "NavySquad",
+                        "SquadType": "Navy",
+                        "CoName": "Test", "CoFirstName": "Test",
+                        "CoRank": "Admiral", "CoRankShort": "Adm"}
         mission_instance = swe_twitter.mission.Mission(mission_data)
         mission_str = ("Schließt euch dem Kriegsschiff NavySquad unter "
-                       "Kommando von Adm Test zu ZI 010122 nE um "
+                       "Kommando von Admiral Test zu ZI 010122 nE um "
                        "2000 SZ im Kampf für das Imperium an!")
         self.assertEqual(str(mission_instance), mission_str)
 
     def test_sfc_mission_displayed_correctly(self):
-        mission_data = {"Gametime":"2017-01-01T20:00:00","Story":"...",
-                        "Title":"","SquadName":"SFCSquad",
-                        "SquadType":"Starfighter Corps",
-                        "CoName":"Test", "CoFirstName":"Test",
-                        "CoRank":"Marshal","CoRankShort":"Ma"}
+        mission_data = {"Gametime": "2017-01-01T20:00:00", "Story": "...",
+                        "Title": "", "SquadName": "SFCSquad",
+                        "SquadType": "Starfighter Corps",
+                        "CoName": "Test", "CoFirstName": "Test",
+                        "CoRank": "Marshal", "CoRankShort": "Ma"}
         mission_instance = swe_twitter.mission.Mission(mission_data)
         mission_str = ("Begleitet die Piloten des Trägers SFCSquad "
-                       "unter Kommando von Ma Test zu ZI 010122 "
+                       "unter Kommando von Marshal Test zu ZI 010122 "
                        "nE um 2000 SZ ins Gefecht.")
         self.assertEqual(str(mission_instance), mission_str)
 
-    def test_mission_text_shorter_than_140_characters(self):
+    def test_mission_text_shorter_than_280_characters(self):
         for entry in self.data:
             test_mission = swe_twitter.mission.Mission(entry)
-            self.assertLessEqual(len(str(test_mission)), 140)
+            self.assertLessEqual(len(str(test_mission)), 280)
+
 
 class TestBotClass(TestBot):
     """This class is responsible for testing all methods of class Bot."""
@@ -122,6 +127,7 @@ class TestBotClass(TestBot):
                             if tweet.user.screen_name == "SWE_3PO")
         self.assertEqual(test_status, latest_tweet.text)
         self.connection.DestroyStatus(latest_tweet.id)
+
 
 if __name__ == "__main__":
     unittest.main()
