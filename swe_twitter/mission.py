@@ -28,6 +28,7 @@ class Mission(object):
     def __str__(self):
         return {
             "Army": self.armyText(),
+            "Dunkler Orden": self.dunkler_orden_text(),
             "Navy": self.navyText(),
             "Starfighter Corps": self.sfcText()
         }.get(self.TSK, "Hier ist etwas schief gelaufen.")
@@ -41,6 +42,15 @@ class Mission(object):
 
         return " ".join(text)
 
+    def dunkler_orden_text(self):
+        text = ("Du wolltest schon immer ein_e Sith-Krieger_in sein",
+                "und das Imperium mit der Macht unterstützen?",
+                "Dann schliess dich dem Sith-Reaper {einheit} an".format(einheit=self.Einheit),
+                "angefuehrt von {rang} {name}.".format(rang=self.KO_Rang, name=self.KO),
+                "ZI {zi} um {uhr} SZ!".format(zi=self.Spielzeit.strftime("%d%m%y"), uhr=self.Spielzeit.strftime("%H%M")))
+
+        return " ".join(text)
+    
     def navyText(self):
         text = ("Schließt euch dem Kriegsschiff {einheit}".format(einheit=self.Einheit),
                 "unter Kommando von {rang}".format(rang=self.KO_Rang),
